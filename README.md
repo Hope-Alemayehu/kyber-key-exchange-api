@@ -1,96 +1,176 @@
-# Kyber Key Exchange API Demo
+# Kyber Key Exchange API
 
 [![Python](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://www.python.org/downloads/)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.68.0-009688.svg?logo=fastapi)](https://fastapi.tiangolo.com/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.104.0-009688.svg?logo=fastapi)](https://fastapi.tiangolo.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A demonstration backend API implementing a Post-Quantum Cryptography (PQC) key exchange service inspired by the NIST finalist CRYSTALS-Kyber algorithm. Built with FastAPI, this project showcases secure session management and cryptographic operations in a production-ready API service.
+A production-ready backend API implementing Post-Quantum Cryptography (PQC) key exchange using the Kyber algorithm. Built with FastAPI, this project provides secure session management and cryptographic operations.
 
-## Overview
+## Features
 
-This API demonstrates a secure key exchange mechanism that could be used in quantum-resistant cryptographic systems. The service provides:
+- Quantum-resistant key exchange using Kyber algorithm
+- Session-based key management
+- Fallback to simulated cryptography when OQS is not available
+- Comprehensive error handling and logging
+- Interactive API documentation with Swagger UI
 
-- Generation of public-private keypairs per session
-- Secure key exchange simulation
-- Health status monitoring
-- Session-based security model
+## Prerequisites
 
-## Important Note: Simulated Cryptography
-
-**This is a simulation** of quantum-resistant cryptographic operations. The implementation uses secure random byte generation to demonstrate the API flow without actual lattice-based PQC algorithms.
-
-### Key Simulation Details:
-- Key generation and encapsulation are simulated using cryptographically secure random bytes
-- The architecture is designed for easy integration with real PQC libraries
-- Code structure follows best practices for production deployment
-
-## Project Structure
-
-```
-kyber-key-exchange-api/
-├── app/
-│   ├── main.py             # FastAPI application and endpoints
-│   ├── crypto_utils.py     # Simulated cryptographic operations
-│   └── session_store.py    # In-memory session management
-├── requirements.txt        # Project dependencies
-└── README.md               # This file
-```
-
-## Getting Started
-
-### Prerequisites
 - Python 3.8+
 - pip (Python package manager)
+- Windows/Linux/macOS
 
-### Installation
+## Installation
 
-1. Clone the repository:
+1. **Clone the repository**:
    ```bash
    git clone https://github.com/yourusername/kyber-key-exchange-api.git
    cd kyber-key-exchange-api
    ```
 
-2. Create and activate a virtual environment:
+2. **Create and activate a virtual environment**:
    ```bash
    python -m venv venv
-   source venv/bin/activate  # On Windows: .\venv\Scripts\activate
+   # On Windows:
+   .\venv\Scripts\activate
+   # On Unix or MacOS:
+   # source venv/bin/activate
    ```
 
-3. Install dependencies:
+3. **Install dependencies**:
    ```bash
    pip install -r requirements.txt
    ```
 
-### Running the API
+## Optional: Enable Real PQC (Recommended for Production)
+
+For real post-quantum cryptography, install the Open Quantum Safe library:
+
+1. **Windows**:
+   - Install [Visual Studio Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/) with C++ workload
+   - Install [CMake](https://cmake.org/download/)
+   - Add CMake to your system PATH
+
+2. **Install OQS Python bindings**:
+   ```bash
+   pip install git+https://github.com/open-quantum-safe/liboqs-python.git
+   ```
+
+## Running the API
 
 Start the development server:
 ```bash
 uvicorn app.main:app --reload
 ```
 
-Access the interactive API documentation at:
-```
-http://127.0.0.1:8000/docs
-```
+The API will be available at:
+- Interactive documentation: http://127.0.0.1:8000/docs
+- Alternative documentation: http://127.0.0.1:8000/redoc
 
 ## API Endpoints
 
-- `POST /generate-keypair`: Generate a new keypair and session
-- `POST /exchange`: Perform key exchange using session data
-- `GET /health`: Check API health status
+### `POST /generate-keypair`
+Generate a new keypair and session.
 
-## Future Enhancements
+**Response**:
+```json
+{
+  "session_id": "unique-session-id",
+  "public_key": "base64-encoded-public-key",
+  "private_key": "base64-encoded-private-key"
+}
+```
 
-- [ ] Integrate with Open Quantum Safe (liboqs) for real PQC operations
-- [ ] Add persistent session storage
-- [ ] Implement authentication and rate limiting
-- [ ] Dockerize the application
-- [ ] Set up CI/CD pipeline
-- [ ] Add comprehensive test suite
+### `POST /exchange`
+Perform key exchange using session data.
 
-## Contributing
+**Request Body**:
+```json
+{
+  "session_id": "your-session-id",
+  "peer_public_key": "base64-encoded-peer-public-key"
+}
+```
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+**Response**:
+```json
+{
+  "ciphertext": "base64-encoded-ciphertext",
+  "shared_secret": "base64-encoded-shared-secret"
+}
+```
+
+### `POST /decapsulate`
+Decapsulate a shared secret using a private key.
+
+**Request Body**:
+```json
+{
+  "session_id": "your-session-id",
+  "ciphertext": "base64-encoded-ciphertext"
+}
+```
+
+**Response**:
+```json
+{
+  "shared_secret": "base64-encoded-shared-secret"
+}
+```
+
+### `GET /health`
+Check API health status.
+
+**Response**:
+```json
+{
+  "status": "healthy"
+}
+```
+
+## Project Structure
+
+```
+kyber-key-exchange-api/
+├── app/
+│   ├── __init__.py
+│   ├── main.py             # FastAPI application and endpoints
+│   ├── crypto_utils.py     # Cryptographic operations with OQS fallback
+│   └── session_store.py    # In-memory session management
+├── tests/                  # Test files
+├── requirements.txt        # Production dependencies
+├── requirements-dev.txt    # Development dependencies
+└── README.md               # This file
+```
+
+## Development
+
+### Running Tests
+```bash
+pip install -r requirements-dev.txt
+pytest
+```
+
+### Code Style
+This project uses:
+- Black for code formatting
+- Flake8 for linting
+- isort for import sorting
+
+Run code style checks:
+```bash
+black .
+flake8
+isort .
+```
+
+## Deployment
+
+For production deployment, consider using:
+- Gunicorn with Uvicorn workers
+- Environment variables for configuration
+- Proper logging and monitoring
+- HTTPS with valid certificates
 
 ## License
 
@@ -98,12 +178,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Resources
 
-- [NIST Post-Quantum Cryptography](https://csrc.nist.gov/projects/post-quantum-cryptography)
-- [CRYSTALS-Kyber](https://pq-crystals.org/kyber/)
+- [Open Quantum Safe](https://openquantumsafe.org/)
+- [Kyber Algorithm](https://pq-crystals.org/kyber/)
 - [FastAPI Documentation](https://fastapi.tiangolo.com/)
-
-## Acknowledgments
-
-- NIST for standardizing post-quantum cryptographic algorithms
-- The Open Quantum Safe project for their work on PQC implementations
-- The FastAPI community for an amazing web framework
