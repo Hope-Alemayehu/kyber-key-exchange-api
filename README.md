@@ -132,16 +132,35 @@ Check API health status.
 
 ```
 kyber-key-exchange-api/
-├── app/
-│   ├── __init__.py
-│   ├── main.py             # FastAPI application and endpoints
-│   ├── crypto_utils.py     # Cryptographic operations with OQS fallback
-│   └── session_store.py    # In-memory session management
-├── tests/                  # Test files
-├── requirements.txt        # Production dependencies
-├── requirements-dev.txt    # Development dependencies
-└── README.md               # This file
+├── app/                          # Main application package
+│   ├── __init__.py             # Package initialization
+│   ├── main.py                 # FastAPI application and endpoints
+│   ├── crypto_utils.py         # Cryptographic operations using OQS
+│   └── session_store.py        # Session management with TTL support
+├── .gitignore                  # Git ignore file
+├── README.md                   # This file
+├── requirements.txt            # Production dependencies
+└── requirements-dev.txt        # Development dependencies
 ```
+
+### Key Components
+
+- **`app/main.py`**:
+  - FastAPI application setup and configuration
+  - API route definitions
+  - Request/response models
+  - Error handling middleware
+
+- **`app/crypto_utils.py`**:
+  - Implements Kyber key exchange using OQS
+  - Handles key generation, encapsulation, and decapsulation
+  - Provides fallback to simulated cryptography when OQS is not available
+  - Includes comprehensive error handling and logging
+
+- **`app/session_store.py`**:
+  - Manages user sessions with TTL (Time To Live)
+  - Thread-safe session operations
+  - Automatic session cleanup
 
 ## Development
 
