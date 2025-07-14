@@ -4,7 +4,7 @@
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.104.0-009688.svg?logo=fastapi)](https://fastapi.tiangolo.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A production-ready backend API implementing Post-Quantum Cryptography (PQC) key exchange using the Kyber algorithm. Built with FastAPI, this project provides secure session management and cryptographic operations.
+A backend API implementing Post-Quantum Cryptography (PQC) key exchange using the Kyber algorithm. Built with FastAPI, this project provides secure session management and cryptographic operations.
 
 ## Features
 
@@ -72,6 +72,14 @@ The API will be available at:
 ### `POST /generate-keypair`
 Generate a new keypair and session.
 
+**Example Request**:
+```bash
+curl -X 'POST' \
+  'http://127.0.0.1:8000/generate-keypair' \
+  -H 'Content-Type: application/json' \
+  -d '{}'
+```
+
 **Response**:
 ```json
 {
@@ -84,12 +92,15 @@ Generate a new keypair and session.
 ### `POST /exchange`
 Perform key exchange using session data.
 
-**Request Body**:
-```json
-{
-  "session_id": "your-session-id",
-  "peer_public_key": "base64-encoded-peer-public-key"
-}
+**Example Request**:
+```bash
+curl -X 'POST' \
+  'http://127.0.0.1:8000/exchange' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "session_id": "your-session-id",
+    "peer_public_key": "base64-encoded-peer-public-key"
+  }'
 ```
 
 **Response**:
@@ -103,12 +114,15 @@ Perform key exchange using session data.
 ### `POST /decapsulate`
 Decapsulate a shared secret using a private key.
 
-**Request Body**:
-```json
-{
-  "session_id": "your-session-id",
-  "ciphertext": "base64-encoded-ciphertext"
-}
+**Example Request**:
+```bash
+curl -X 'POST' \
+  'http://127.0.0.1:8000/decapsulate' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "session_id": "your-session-id",
+    "ciphertext": "base64-encoded-ciphertext"
+  }'
 ```
 
 **Response**:
@@ -120,6 +134,13 @@ Decapsulate a shared secret using a private key.
 
 ### `GET /health`
 Check API health status.
+
+**Example Request**:
+```bash
+curl -X 'GET' \
+  'http://127.0.0.1:8000/health' \
+  -H 'accept: application/json'
+```
 
 **Response**:
 ```json
