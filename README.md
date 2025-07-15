@@ -42,6 +42,26 @@ A backend API implementing Post-Quantum Cryptography (PQC) key exchange using th
    pip install -r requirements.txt
    ```
 
+## Quick Start
+
+1. **Start the server**:
+   ```bash
+   uvicorn app.main:app --reload
+   ```
+
+2. **Access the interactive API documentation**:
+   - Open your browser and go to: http://127.0.0.1:8000/docs
+   - This will show you all available endpoints with the ability to test them directly
+
+3. **Example API Request**:
+   ```bash
+   # Generate a new key pair
+   curl -X 'POST' \
+     'http://127.0.0.1:8000/api/keys/generate' \
+     -H 'accept: application/json' \
+     -d ''
+   ```
+
 ## Optional: Enable Real PQC (Recommended for Production)
 
 For real post-quantum cryptography, install the Open Quantum Safe library:
